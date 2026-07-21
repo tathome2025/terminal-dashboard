@@ -179,7 +179,7 @@ Session 活著 = 監控運行。Session 斷了 = 監控停止。重連 = 自動�
 
 ```bash
 # 1. 克隆
-git clone https://github.com/tathome2025/terminal-dashboard.git
+git clone https://github.com/tatlivingdev/terminal-dashboard.git
 cd terminal-dashboard
 
 # 2. 設定

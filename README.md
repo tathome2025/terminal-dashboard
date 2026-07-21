@@ -181,7 +181,7 @@ Session alive = monitoring runs. Session dies = monitoring stops. Reconnect = au
 
 ```bash
 # 1. Clone
-git clone https://github.com/TATLivingDEV/terminal-dashboard.git
+git clone https://github.com/tatlivingdev/terminal-dashboard.git
 cd terminal-dashboard
 
 # 2. Configure
