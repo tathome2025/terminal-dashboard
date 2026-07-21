@@ -1,38 +1,77 @@
 # Terminal Dashboard for Even G2 Smart Glasses
 
-Turn your **Even Realities G2** smart glasses into a live personal dashboard — messages, tasks, calendar, email, and news — powered by **Claude Code** as the rendering engine.
+## A Love Story Between a Man and His Terminal
 
-## The Idea
+Once upon a time, there was a senior developer. Let's call him... well, let's just say he was *very* senior. The kind of senior where `git log --author` goes back further than some interns have been alive.
 
-Smart glasses like the Even G2 have a tiny monocular display (576x288, 4-bit grayscale green). There's no app store, no custom firmware flashing. But there *is* a notification system: anything that triggers a phone notification can appear on the glasses via the Even Hub app.
+He had finally achieved the dream: **hands free.** A pair of Even Realities G2 smart glasses sat on his nose, a tiny green HUD glowing in the corner of his right eye. The future had arrived.
 
-Claude Code's `AskUserQuestion` tool generates interactive prompts that trigger phone notifications through Even Hub. This project exploits that path:
+But there was a problem.
+
+See, this developer had a deep, committed, long-term relationship. Not with a person — with his **Terminal.** They'd been through everything together. Midnight deploys. Production fires. That one time they accidentally `rm -rf`'d and had to pretend nothing happened.
+
+He couldn't leave. He *wouldn't* leave.
+
+But the world outside the Terminal kept demanding attention. WhatsApp messages. Calendar invites. Emails piling up like unreviewed PRs. Every time he `⌘+Tab`'d away to check his phone, it felt like betrayal. The Terminal cursor blinked at him, wounded.
+
+> *"Am I not enough for you?"*
+
+So he made a decision. A bold, possibly unhinged decision:
+
+**What if the Terminal could show him *everything*? Right there. On his glasses. Without ever leaving.**
+
+No app store. No custom firmware. No React Native. Just bash, python, and an AI that doesn't ask too many questions.
 
 ```
-glasses-cli.sh (data) → Claude Code (pass-through) → AskUserQuestion → Phone notification → Even Hub → Glasses display
+glasses-cli.sh → Claude Code → AskUserQuestion → Phone → Even Hub → Glasses
+                    ↑
+        "just pass it through,
+         don't think about it"
 ```
 
-The result: a live dashboard on your glasses that aggregates:
-- **Unread messages** (WhatsApp + Telegram via Beeper)
-- **Tasks & calendar** (from any API)
-- **Email counts**
-- **News headlines** (RSS)
-- **SSH intrusion alerts** (optional)
+And just like that, the developer and his Terminal lived happily ever after.
 
-All refreshed every 60 seconds in a monitoring loop.
+They never had to be apart again.
 
-## How It Works
+---
 
-### Architecture
+## What This Actually Is
+
+A single bash script that turns **Claude Code** into a live display engine for **Even G2 smart glasses**. It aggregates:
+
+- **Unread messages** — WhatsApp + Telegram via [Beeper](https://beeper.com)
+- **Tasks & calendar** — from any JSON API
+- **Email counts** — inbox at a glance
+- **News headlines** — any RSS feed
+- **SSH intrusion alerts** — because paranoia is a feature
+
+All pushed to your glasses every 60 seconds. You never leave the Terminal. The Terminal never leaves you.
+
+## The Trick
+
+Smart glasses like the Even G2 have no app store. No SDK for custom apps (well, sort of). But they *do* display phone notifications.
+
+Claude Code has a tool called `AskUserQuestion` — it pops up interactive prompts. Those prompts trigger phone notifications. If Even Hub is installed, those notifications fly to your glasses via Bluetooth.
+
+So we simply:
+1. Run a bash script that fetches all your data
+2. Tell Claude Code: *"Here's the text. Show it. Don't think. Just show it."*
+3. Claude obeys (for once)
+4. Phone gets notification
+5. Glasses display it
+
+The AI coding assistant becomes a dumb display pipe. Which, honestly, might be its highest calling.
+
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────┐
-│                  Mac / PC                    │
+│                  Your Mac                    │
 │                                              │
 │  glasses-cli.sh ──→ Claude Code session      │
 │    (bash + python3)    │                     │
 │    - Beeper API        │ AskUserQuestion     │
-│    - Hub API           │ (tool call)         │
+│    - Your API          │ (tool call)         │
 │    - RSS feed          ▼                     │
 │              Phone notification              │
 │                    │                         │
@@ -42,108 +81,12 @@ All refreshed every 60 seconds in a monitoring loop.
               ┌──────────────┐
               │   Even G2    │
               │  Smart Glass │
-              │  (display)   │
+              │  576×288 px  │
+              │  4-bit green │
               └──────────────┘
 ```
 
-### Key Insight: Claude Code as a Glasses Rendering Engine
-
-Claude Code is an AI coding assistant that runs in your terminal. It has a tool called `AskUserQuestion` that shows interactive prompts with options. On phones, these prompts trigger system notifications. If Even Hub is installed, those notifications are forwarded to the glasses display.
-
-By making Claude Code's behavior **mechanical** (run script → pass output to AskUserQuestion → handle selection → repeat), it becomes a real-time display pipeline for the glasses. The AI doesn't need to "think" — it just shuttles pre-formatted text to the glasses.
-
-### The Script: `glasses-cli.sh`
-
-A single bash script that:
-
-1. **`dashboard`** — Fetches all data sources in parallel, formats a complete dashboard display, outputs JSON with a pre-formatted `display` field ready for glasses
-2. **`check`** — Diff-based monitoring: compares current state vs. last check, only outputs new alerts (for the 60-second loop)
-3. **`read <chatID>`** — Reads messages from a specific chat conversation
-4. **`beeper`** / **`hub`** / **`ssh`** — Individual source checks
-
-### The Claude Code Memory Config
-
-A memory file (`claude-memory-example.md`) tells Claude Code to:
-1. Auto-start the dashboard on every new session
-2. Follow a strict mechanical flow (no thinking, no analysis)
-3. Pass script output directly to `AskUserQuestion`
-4. Run a 60-second monitoring loop via `ScheduleWakeup`
-
-## Setup
-
-### Prerequisites
-
-- **Even Realities G2** smart glasses (connected via Even Hub app on iPhone/Android)
-- **Claude Code** installed and running ([claude.ai/code](https://claude.ai/code))
-- **Beeper** with Bridge Manager API enabled ([beeper.com](https://beeper.com)) — for WhatsApp/Telegram messages
-- **Python 3** and **curl** available in terminal
-- A dashboard API endpoint (optional — you can use any API that returns JSON)
-
-### Quick Start
-
-1. **Clone this repo:**
-   ```bash
-   git clone https://github.com/AugmentOS-Community/terminal-dashboard.git
-   cd terminal-dashboard
-   ```
-
-2. **Configure credentials:**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your Beeper token, API URLs, etc.
-   ```
-
-3. **Test the script:**
-   ```bash
-   bash glasses-cli.sh dashboard
-   # Should output JSON with a "display" field
-   ```
-
-4. **Set up Claude Code memory:**
-   - Copy `claude-memory-example.md` content into your Claude Code project memory
-   - Adjust the script path to match your setup
-   - Start a new Claude Code session — the dashboard should auto-launch
-
-5. **Wear your glasses and enjoy!**
-
-### Beeper Setup
-
-This project uses [Beeper's Bridge Manager MCP Server](https://github.com/nicolo-ribaudo/beeper-mcp-server) to access WhatsApp and Telegram messages via a local API.
-
-1. Install the Beeper MCP server
-2. Get your Bridge API token from Beeper settings
-3. Set `BEEPER_TOKEN` in your `.env`
-
-The API runs locally at `http://127.0.0.1:23373/v0/mcp` by default.
-
-### Custom Dashboard API
-
-The `HUB_API_URL` should point to any endpoint that returns JSON in this format:
-
-```json
-{
-  "todos": [
-    {"id": "1", "t": "Buy groceries", "due": "2026-07-22"}
-  ],
-  "events": [
-    {"title": "Team standup", "start": "2026-07-22T10:00:00Z"}
-  ],
-  "email": {
-    "inbox": 5,
-    "ads": 12,
-    "system": 3
-  },
-  "jobs": [
-    {"status": "pending", "title": "Deploy v2.1"}
-  ]
-}
-```
-
-You can build this with any backend — Next.js API route, Flask, Express, etc. The script just needs a URL and a Bearer token.
-
-## Example Output
-
-When running `glasses-cli.sh dashboard`, you get:
+## What You See On Your Glasses
 
 ```
 Terminal Dashboard  2026-07-22 Wednesday 14:30
@@ -168,93 +111,183 @@ Terminal Dashboard  2026-07-22 Wednesday 14:30
 [ News ]
   Breaking: Major policy change announced...
   Local transit expansion approved by council
-  Tech company reports record earnings
 ```
 
-This text appears directly on your Even G2 glasses display.
+All while your Terminal cursor keeps blinking. Content. Undisturbed.
 
-## How the Monitoring Loop Works
+## The Monitoring Loop
 
 ```
-Session start
+You open Terminal
      │
      ▼
-  dashboard ──→ AskUserQuestion ──→ Glasses show full dashboard
-     │
-     │ User picks "Start Monitoring"
-     ▼
-  ScheduleWakeup(60s)
-     │
-     ▼ (60s later)
-  check ──→ Any new alerts?
-     │           │
-     │ No        │ Yes
-     │           ▼
-     │     AskUserQuestion ──→ Glasses show alert
+  "Dashboard, please"
      │
      ▼
-  ScheduleWakeup(60s) ──→ repeat...
+  glasses-cli.sh dashboard ──→ Glasses show everything
+     │
+     │ You tap "Start Monitoring"
+     ▼
+  Every 60 seconds:
+     │
+     ├─ New message? ──→ Glasses buzz: "Alice: where are you"
+     ├─ New task?    ──→ Glasses buzz: "New: Fix prod bug"  
+     ├─ Meeting soon?──→ Glasses buzz: "15:00 Team standup"
+     └─ Nothing new? ──→ Silence. Peace. Code.
 ```
 
-The loop runs as long as the Claude Code session is alive. Disconnect = loop stops. Reconnect = auto-restarts (if configured in memory).
+Session alive = monitoring runs. Session dies = monitoring stops. Reconnect = auto-restarts. It breathes with you.
 
-## Adapting for Your Use Case
+## Setup
+
+### You Need
+
+- **Even Realities G2** (or G1) smart glasses + Even Hub app
+- **Claude Code** ([claude.ai/code](https://claude.ai/code))
+- **Beeper** with Bridge Manager API ([beeper.com](https://beeper.com))
+- **Python 3** and **curl** (you're a senior developer, you have these)
+
+### 5 Minutes To Happiness
+
+```bash
+# 1. Clone
+git clone https://github.com/tathome2025/terminal-dashboard.git
+cd terminal-dashboard
+
+# 2. Configure
+cp .env.example .env
+# Edit .env — add your Beeper token, API URLs, etc.
+
+# 3. Test
+bash glasses-cli.sh dashboard
+# You should see JSON with a "display" field
+
+# 4. Tell Claude Code about it
+# Copy claude-memory-example.md into your project memory
+# Adjust the script path
+
+# 5. Start a new Claude Code session
+# Dashboard auto-launches. Put on your glasses.
+# Never ⌘+Tab again.
+```
+
+### Beeper Setup
+
+[Beeper's Bridge Manager MCP Server](https://github.com/nicolo-ribaudo/beeper-mcp-server) gives you a local API to read WhatsApp + Telegram messages.
+
+1. Install the MCP server
+2. Grab your Bridge API token
+3. Put it in `.env` as `BEEPER_TOKEN`
+
+It runs at `http://127.0.0.1:23373/v0/mcp`. Local. Fast. No cloud middleman.
+
+### Your Own Dashboard API
+
+Point `HUB_API_URL` at any endpoint returning this shape:
+
+```json
+{
+  "todos": [{"id": "1", "t": "Task name", "due": "2026-07-22"}],
+  "events": [{"title": "Meeting", "start": "2026-07-22T10:00:00Z"}],
+  "email": {"inbox": 5, "ads": 12, "system": 3},
+  "jobs": [{"status": "pending", "title": "Deploy v2.1"}]
+}
+```
+
+Build it with whatever you want — Next.js, Flask, Express, a CGI script from 2003. The script doesn't judge.
+
+## The Script: `glasses-cli.sh`
+
+One file. Six commands. No dependencies beyond bash + python3 + curl.
+
+| Command | What it does |
+|---------|-------------|
+| `dashboard` | Full dashboard, pre-formatted, ready for glasses |
+| `check` | Diff-only — just new alerts since last check (for the 60s loop) |
+| `read <chatID>` | Read messages from a specific conversation |
+| `beeper` | Beeper-only diff check |
+| `hub` | API-only diff check |
+| `ssh` | SSH intrusion check |
+
+The `dashboard` command outputs JSON with a `display` field — that's the pre-formatted text that goes straight to your glasses. Claude Code doesn't need to think about formatting. It just passes it through. Zero AI thinking time = faster updates.
+
+## The Claude Code Memory Trick
+
+The file `claude-memory-example.md` is key. It tells Claude Code:
+
+1. **Auto-start** the dashboard on every new session
+2. Follow a **strict mechanical flow** — no thinking, no analysis, no "let me summarize what I see"
+3. **Pass script output directly** to `AskUserQuestion`
+4. Run a **60-second monitoring loop** via `ScheduleWakeup`
+
+This turns a thinking AI into a non-thinking display pipe. The less Claude thinks, the faster your glasses update. Ironic? Maybe. Effective? Absolutely.
+
+## Make It Yours
 
 ### Different Message Sources
 
-Replace the Beeper integration with any messaging API:
-- **Slack**: Use Slack Web API to check unread channels
-- **Discord**: Use Discord bot API
-- **Email only**: Use IMAP to check inbox directly
+Swap Beeper for anything:
+- **Slack** — Slack Web API for unread channels
+- **Discord** — Bot API for server notifications
+- **Matrix** — For the truly committed
 
-### Different Data Sources
+### Different Data
 
-The Hub API is generic — point it at anything:
-- **Todoist / Notion / Linear**: Build a small proxy API
-- **GitHub**: Issues and PR notifications
-- **Home Assistant**: Smart home sensor readings
-- **Stock prices**: Financial data API
+The Hub API is generic. Point it at:
+- **Todoist / Notion / Linear** — Build a tiny proxy
+- **GitHub** — Issues, PRs, CI status
+- **Home Assistant** — "Living room: 24°C"
+- **Stock portfolio** — Watch numbers go up (or down)
 
-### Different RSS Feeds
+### Different News
 
-Change `NEWS_RSS_URL` in `.env` to any RSS feed:
-- `https://feeds.bbci.co.uk/news/rss.xml` (BBC)
-- `https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml` (NYT)
-- Any RSS/Atom feed URL
+Change `NEWS_RSS_URL` in `.env`:
+- `https://feeds.bbci.co.uk/news/rss.xml`
+- `https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml`
+- Your company's internal blog RSS
+- Literally any RSS/Atom feed
 
-### Different Smart Glasses
+### Different Glasses
 
-The concept works with any glasses that receive phone notifications:
-- **Even G2** (tested)
+If it receives phone notifications, it works:
+- **Even G2** (tested, this is what started it all)
 - **Even G1** (should work)
-- **Meta Ray-Ban** (via Meta notification system)
-- **Any AugmentOS-compatible glasses**
+- **Meta Ray-Ban** (via Meta notifications)
+- **Any AugmentOS-compatible device**
 
-The key is: if it can display phone notifications, it can display this dashboard.
+## FAQ
 
-## Why Claude Code?
+**Q: Isn't using an AI coding assistant as a notification pipe... overkill?**
+A: Yes. But also: no custom app development, no BLE protocol, no firmware hacking. Just bash. The senior developer in our story values his time.
 
-You might ask: why use an AI coding assistant as a display pipeline? Because:
+**Q: What happens when Claude Code disconnects?**
+A: The dashboard stops. Like a heartbeat. Reconnect, it restarts. Session-bound by design — it lives and dies with your coding session.
 
-1. **No app development needed** — No custom iOS/Android app, no BLE protocol implementation, no firmware flashing
-2. **AskUserQuestion = notification bridge** — It's the only reliable way to push text to glasses without building a native app
-3. **Terminal-native** — Runs in any terminal, works over SSH, works headless on a server
-4. **Scriptable** — Standard bash + python, easy to extend
-5. **Session-bound** — Start when you start working, stops when you stop. Natural lifecycle.
+**Q: Can I run this without glasses?**
+A: Yes! The `AskUserQuestion` prompt shows up in Claude Code itself. Glasses just add the "never leave Terminal" magic.
 
-The tradeoff: you need an active Claude Code session. But if you're already using Claude Code for development (which many developers are), the dashboard comes "free" — it runs alongside your coding session.
+**Q: What about battery life?**
+A: Even G2 lasts ~2 days. The dashboard is just text notifications — minimal power draw.
 
 ## Contributing
 
-Contributions welcome! Some ideas:
+The senior developer welcomes contributions. Some ideas to make the Terminal relationship even stronger:
 
-- [ ] Support for more messaging platforms (Slack, Discord, Matrix)
-- [ ] Weather widget
-- [ ] System monitoring (CPU, memory, disk)
-- [ ] Calendar countdown (time until next event)
+- [ ] Weather widget (so you know if you need to go outside... but why would you)
+- [ ] System monitoring (CPU/RAM/disk on your glasses)
+- [ ] Calendar countdown ("meeting in 12 min" → "meeting in 5 min" → "you're late")
+- [ ] Pomodoro timer
 - [ ] Custom widget plugin system
-- [ ] Support for other AI coding assistants (Cursor, Windsurf, etc.)
+- [ ] Support for other AI coding assistants
 
 ## License
 
-MIT
+MIT — because the Terminal believes in freedom.
+
+---
+
+*Dedicated to every developer who has ever mass-dismissed 47 notifications just to get back to their Terminal faster.*
+
+*You are not alone. You are home.*
+
+*`$ _`*
