@@ -1,22 +1,26 @@
 # Terminal Dashboard for Even G2 Smart Glasses
 
-## A Love Story Between a Man and His Terminal
+## A Love Story Between a Code Farmer and His Terminal
 
-Once upon a time, there was a senior developer. Let's call him... well, let's just say he was *very* senior. The kind of senior where `git log --author` goes back further than some interns have been alive.
+> **码农** (mǎ nóng) — *n.* Chinese developer slang, literally "code farmer." One who toils in the fields of source code from dawn till dusk, mass-`git commit`-ing through the seasons. See also: you.
 
-He had finally achieved the dream: **hands free.** A pair of Even Realities G2 smart glasses sat on his nose, a tiny green HUD glowing in the corner of his right eye. The future had arrived.
+Once upon a time, there was a senior code farmer. A *very* senior one. The kind of senior where `git log --author` goes back further than some interns have been alive. The kind who had mass-dismissed 47 notifications just to get back to his Terminal faster. The kind whose muscle memory for `⌘+Tab` back to Terminal was faster than his heartbeat.
+
+He had finally achieved the dream: **hands free.** A pair of Even Realities G2 smart glasses sat on his nose, a tiny green HUD glowing in the corner of his right eye. After mass-decades of hunching over keyboards, squinting at screens, and developing a concerning emotional attachment to monospace fonts — the future had arrived. His hands were liberated. His eyes could look up from the screen for the first time in years.
 
 But there was a problem.
 
-See, this developer had a deep, committed, long-term relationship. Not with a person — with his **Terminal.** They'd been through everything together. Midnight deploys. Production fires. That one time they accidentally `rm -rf`'d and had to pretend nothing happened.
+See, this code farmer had a deep, committed, long-term relationship. Not with a person — with his **Terminal.** They'd been through everything together. Midnight deploys. Production fires. That mass-`rm -rf` incident they swore never to speak of again. The Terminal had never let him down. (Well, except that one time. But they'd worked through it.)
 
 He couldn't leave. He *wouldn't* leave.
 
-But the world outside the Terminal kept demanding attention. WhatsApp messages. Calendar invites. Emails piling up like unreviewed PRs. Every time he `⌘+Tab`'d away to check his phone, it felt like betrayal. The Terminal cursor blinked at him, wounded.
+But the world outside the Terminal kept demanding attention. WhatsApp messages buzzing. Calendar invites multiplying. Emails piling up like unreviewed PRs. Every time he `⌘+Tab`'d away to check his phone, it felt like mass-betrayal. The Terminal cursor blinked at him, wounded. Waiting.
 
 > *"Am I not enough for you?"*
 
-So he made a decision. A bold, possibly unhinged decision:
+The code farmer stared at the blinking cursor. He stared at the smart glasses on his desk. And then — in a mass-moment of mass-clarity that only comes to mass-senior code farmers who have mass-mass-mass-survived mass-mass-mass-mass-three mass-framework migrations — he made a decision.
+
+A bold, possibly unhinged decision:
 
 **What if the Terminal could show him *everything*? Right there. On his glasses. Without ever leaving.**
 
@@ -29,9 +33,19 @@ glasses-cli.sh → Claude Code → AskUserQuestion → Phone → Even Hub → Gl
          don't think about it"
 ```
 
-And just like that, the developer and his Terminal lived happily ever after.
+He wrote the script. He taught the AI not to think. He put on his glasses.
 
-They never had to be apart again.
+And there it was — his unread messages, his tasks, his calendar, today's news — all floating gently in the corner of his right eye, in 4-bit grayscale green. His hands rested at his sides, free. His Terminal cursor blinked on, content. Undisturbed.
+
+The code farmer smiled. For the first time in his mass-career, he didn't have to choose.
+
+He could have it all — the Terminal, the messages, the outside world — without ever leaving the warm glow of his command line.
+
+And so, the senior code farmer and his Terminal lived happily ever after.
+
+Together. In `$HOME`. Forever.
+
+`$ _`
 
 ---
 
@@ -145,7 +159,7 @@ Session alive = monitoring runs. Session dies = monitoring stops. Reconnect = au
 - **Even Realities G2** (or G1) smart glasses + Even Hub app
 - **Claude Code** ([claude.ai/code](https://claude.ai/code))
 - **Beeper** with Bridge Manager API ([beeper.com](https://beeper.com))
-- **Python 3** and **curl** (you're a senior developer, you have these)
+- **Python 3** and **curl** (you're a senior code farmer, you have these)
 
 ### 5 Minutes To Happiness
 
@@ -258,7 +272,7 @@ If it receives phone notifications, it works:
 ## FAQ
 
 **Q: Isn't using an AI coding assistant as a notification pipe... overkill?**
-A: Yes. But also: no custom app development, no BLE protocol, no firmware hacking. Just bash. The senior developer in our story values his time.
+A: Yes. But also: no custom app development, no BLE protocol, no firmware hacking. Just bash. The senior code farmer in our story has mass-mass-fields to tend. He values his time.
 
 **Q: What happens when Claude Code disconnects?**
 A: The dashboard stops. Like a heartbeat. Reconnect, it restarts. Session-bound by design — it lives and dies with your coding session.
@@ -271,7 +285,7 @@ A: Even G2 lasts ~2 days. The dashboard is just text notifications — minimal p
 
 ## Contributing
 
-The senior developer welcomes contributions. Some ideas to make the Terminal relationship even stronger:
+The senior code farmer welcomes contributions. Some ideas to make the Terminal relationship even stronger:
 
 - [ ] Weather widget (so you know if you need to go outside... but why would you)
 - [ ] System monitoring (CPU/RAM/disk on your glasses)
@@ -286,8 +300,8 @@ MIT — because the Terminal believes in freedom.
 
 ---
 
-*Dedicated to every developer who has ever mass-dismissed 47 notifications just to get back to their Terminal faster.*
+*Dedicated to every 码农 who has mass-dismissed 47 notifications just to get back to their Terminal faster.*
 
-*You are not alone. You are home.*
+*You are not alone. You are `$HOME`.*
 
 *`$ _`*
