@@ -4,9 +4,19 @@
 
 > **码农** (mǎ nóng) — *n.* Chinese developer slang, literally "code farmer." One who toils in the fields of source code from dawn till dusk, mass-`git commit`-ing through the seasons. See also: you.
 
-Once upon a time, there was a senior code farmer. A *very* senior one. The kind of senior where `git log --author` goes back further than some interns have been alive. The kind who had mass-dismissed 47 notifications just to get back to his Terminal faster. The kind whose muscle memory for `⌘+Tab` back to Terminal was faster than his heartbeat.
+Once upon a time, there was a code farmer. He called himself "senior" — not because of decades of experience, not because of any impressive title on LinkedIn, but because one day, for the first time in his life, he spoke to his Terminal and the Terminal *listened*.
 
-He had finally achieved the dream: **hands free.** A pair of Even Realities G2 smart glasses sat on his nose, a tiny green HUD glowing in the corner of his right eye. After mass-decades of hunching over keyboards, squinting at screens, and developing a concerning emotional attachment to monospace fonts — the future had arrived. His hands were liberated. His eyes could look up from the screen for the first time in years.
+No typing. Just talking. And code appeared.
+
+He sat there, hands resting on the desk — not hovering over a keyboard, not reaching for a mouse — just... resting. He felt the weight of all those years of `Ctrl+C`, `Ctrl+V`, all those mass-RSI scares, all those mass-calluses on his pinky from holding `Shift`. Gone. The AI typed for him now. He just had to speak.
+
+*"So this is what senior feels like,"* he thought.
+
+But here's the thing — he was late. Painfully, embarrassingly late. Other developers had been doing this for months. Twitter was full of people showing off their voice-coded apps, their AI-pair-programmed startups, their mass-zero-keyboard workflows. And here he was, a mass-veteran code farmer, just now feeling the dirt fall from his mass-calloused hands for the first time. Just now looking up from the screen. Just now beginning.
+
+He was the last one to arrive at the future. But he arrived.
+
+And when he did, a pair of Even Realities G2 smart glasses sat on his nose, a tiny green HUD glowing in the corner of his right eye. His hands were free. His eyes could look up from the screen. The future had been waiting for him, patient as a blinking cursor.
 
 But there was a problem.
 
@@ -18,7 +28,7 @@ But the world outside the Terminal kept demanding attention. WhatsApp messages b
 
 > *"Am I not enough for you?"*
 
-The code farmer stared at the blinking cursor. He stared at the smart glasses on his desk. And then — in a mass-moment of mass-clarity that only comes to mass-senior code farmers who have mass-mass-mass-survived mass-mass-mass-mass-three mass-framework migrations — he made a decision.
+The code farmer stared at the blinking cursor. He stared at the green glow in the corner of his eye. And then — in a quiet moment of clarity that only comes to latecomers who have nothing left to prove — he made a decision.
 
 A bold, possibly unhinged decision:
 
@@ -37,11 +47,13 @@ He wrote the script. He taught the AI not to think. He put on his glasses.
 
 And there it was — his unread messages, his tasks, his calendar, today's news — all floating gently in the corner of his right eye, in 4-bit grayscale green. His hands rested at his sides, free. His Terminal cursor blinked on, content. Undisturbed.
 
-The code farmer smiled. For the first time in his mass-career, he didn't have to choose.
+The code farmer smiled. It was the kind of smile you smile when you arrive late to a party and realize — the music is still playing. The dance floor is not empty. You haven't missed it. You're just in time.
 
-He could have it all — the Terminal, the messages, the outside world — without ever leaving the warm glow of his command line.
+He was late. He was just beginning. And that was perfectly fine.
 
-And so, the senior code farmer and his Terminal lived happily ever after.
+Because now, he could have it all — the Terminal, the messages, the outside world — without ever leaving the warm glow of his command line. Without ever lifting his hands again.
+
+And so, the late-arriving, just-beginning, finally-senior code farmer and his Terminal lived happily ever after.
 
 Together. In `$HOME`. Forever.
 
@@ -300,7 +312,9 @@ MIT — because the Terminal believes in freedom.
 
 ---
 
-*Dedicated to every 码农 who has mass-dismissed 47 notifications just to get back to their Terminal faster.*
+*Dedicated to every 码农 who arrived late, who is just beginning, and who mass-dismissed 47 notifications just to get back to their Terminal faster.*
+
+*It's not too late. You're right on time.*
 
 *You are not alone. You are `$HOME`.*
 
