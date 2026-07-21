@@ -1,6 +1,6 @@
 # Terminal Dashboard for Even G2 Smart Glasses
 
-**[中文版 README](README.zh.md)**
+**[繁體中文版 README](README.zh.md)**
 
 ## A Love Story Between a Code Farmer and His Terminal
 
@@ -36,7 +36,9 @@ A bold, possibly unhinged decision:
 
 **What if the Terminal could show him *everything*? Right there. On his glasses. Without ever leaving.**
 
-No app store. No custom firmware. No React Native. Just bash, python, and an AI that doesn't ask too many questions.
+Sure, the Even G2 has apps. It has an SDK. But using those means leaving Terminal. Switching windows. `⌘+Tab`. Betrayal.
+
+So he chose another way. No app. No SDK. Just bash, python, and an AI that doesn't ask too many questions.
 
 ```
 glasses-cli.sh → Claude Code → AskUserQuestion → Phone → Even Hub → Glasses
@@ -77,7 +79,7 @@ All pushed to your glasses every 60 seconds. You never leave the Terminal. The T
 
 ## The Trick
 
-Smart glasses like the Even G2 have no app store. No SDK for custom apps (well, sort of). But they *do* display phone notifications.
+The Even G2 has its own apps and SDK — but using them means leaving Terminal. For a code farmer, that's like being asked to leave home. This project takes a different path: it stays inside Terminal and exploits one simple fact — the glasses display phone notifications.
 
 Claude Code has a tool called `AskUserQuestion` — it pops up interactive prompts. Those prompts trigger phone notifications. If Even Hub is installed, those notifications fly to your glasses via Bluetooth.
 
@@ -179,7 +181,7 @@ Session alive = monitoring runs. Session dies = monitoring stops. Reconnect = au
 
 ```bash
 # 1. Clone
-git clone https://github.com/tathome2025/terminal-dashboard.git
+git clone https://github.com/TATLivingDEV/terminal-dashboard.git
 cd terminal-dashboard
 
 # 2. Configure
@@ -285,8 +287,11 @@ If it receives phone notifications, it works:
 
 ## FAQ
 
+**Q: Even G2 has its own apps and SDK. Why not just build a proper app?**
+A: Because that means leaving Terminal. This project exists precisely so you *don't* have to leave. The apps are great — but they live outside the command line. We live inside it.
+
 **Q: Isn't using an AI coding assistant as a notification pipe... overkill?**
-A: Yes. But also: no custom app development, no BLE protocol, no firmware hacking. Just bash. The senior code farmer in our story has mass-mass-fields to tend. He values his time.
+A: Yes. But also: you never leave Terminal, no new SDK to learn, no context switching. Just bash. The code farmer in our story has fields to tend. He values his time.
 
 **Q: What happens when Claude Code disconnects?**
 A: The dashboard stops. Like a heartbeat. Reconnect, it restarts. Session-bound by design — it lives and dies with your coding session.
