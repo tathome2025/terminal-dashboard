@@ -1,5 +1,7 @@
 # Terminal Dashboard for Even G2 Smart Glasses
 
+**[中文版 README](README.zh.md)**
+
 ## A Love Story Between a Code Farmer and His Terminal
 
 > **码农** (mǎ nóng) — *n.* Chinese developer slang, literally "code farmer." One who toils in the fields of source code from dawn till dusk, mass-`git commit`-ing through the seasons. See also: you.
