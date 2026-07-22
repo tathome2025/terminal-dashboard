@@ -17,6 +17,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STATE_DIR="/tmp/glasses-cli"
+MONITOR_FLAG="/tmp/glasses-dashboard-active"
 mkdir -p "$STATE_DIR"
 
 # Load .env if present (same directory as script)
@@ -532,6 +533,21 @@ case "${1:-check}" in
   hub) check_hub ;;
   dashboard) show_dashboard ;;
   read) read_messages "${2:-0}" "${3:-5}" ;;
+  monitor-start)
+    touch "$MONITOR_FLAG"
+    echo '{"status":"active","flag":"'"$MONITOR_FLAG"'"}'
+    ;;
+  monitor-stop)
+    rm -f "$MONITOR_FLAG"
+    echo '{"status":"stopped"}'
+    ;;
+  monitor-status)
+    if [[ -f "$MONITOR_FLAG" ]]; then
+      echo '{"active":true}'
+    else
+      echo '{"active":false}'
+    fi
+    ;;
   check)
     BEEPER=$(check_beeper 2>/dev/null || echo '{"alerts":[]}')
     HUB=$(check_hub 2>/dev/null || echo '{"alerts":[]}')
@@ -564,15 +580,18 @@ print(json.dumps(summary))
 PYEOF
     ;;
   *)
-    echo "Usage: $0 {dashboard|check|read <chatID> [limit]|beeper|hub|ssh}"
+    echo "Usage: $0 {dashboard|check|read <chatID> [limit]|beeper|hub|ssh|monitor-start|monitor-stop|monitor-status}"
     echo ""
     echo "Commands:"
-    echo "  dashboard     Full dashboard, pre-formatted for glasses display"
-    echo "  check         Diff-only monitoring (for background loop)"
-    echo "  read <id>     Read messages from a specific chat"
-    echo "  beeper        Beeper message diff check"
-    echo "  hub           Hub/API task & email diff check"
-    echo "  ssh           SSH intrusion check"
+    echo "  dashboard        Full dashboard, pre-formatted for glasses display"
+    echo "  check            Diff-only monitoring (for background loop)"
+    echo "  read <id>        Read messages from a specific chat"
+    echo "  beeper           Beeper message diff check"
+    echo "  hub              Hub/API task & email diff check"
+    echo "  ssh              SSH intrusion check"
+    echo "  monitor-start    Set monitoring flag (persist across sessions)"
+    echo "  monitor-stop     Clear monitoring flag"
+    echo "  monitor-status   Check if monitoring is active"
     exit 1
     ;;
 esac

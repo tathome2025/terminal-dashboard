@@ -156,7 +156,7 @@ Terminal Dashboard  2026-07-22 Wednesday 14:30
      │
      │ 選擇「開始監控」
      ▼
-  每 60 秒:
+  CronCreate 每 60 秒自動觸發:
      │
      ├─ 新訊息？ ──→ 眼鏡震動: "Alice: 你人呢"
      ├─ 新任務？ ──→ 眼鏡震動: "新: 修復生產 bug"
@@ -164,7 +164,19 @@ Terminal Dashboard  2026-07-22 Wednesday 14:30
      └─ 沒有新的？──→ 安靜。平和。寫代碼。
 ```
 
-Session 活著 = 監控運行。Session 斷了 = 監控停止。重連 = 自動恢復。它跟你同呼吸。
+### 為什麼用 CronCreate，不用 ScheduleWakeup
+
+第一版用 `ScheduleWakeup`——一個等 N 秒後觸發一次的計時器。它有一個致命缺陷：**每次你對 Claude Code 打字，待觸發的 wakeup 就會被取消。** 對一個不斷跟 AI 對話的碼農來說，這代表通知會直接……停了。
+
+`CronCreate` 解決了這個問題。它建立一個獨立的 cron job，每分鐘自動觸發，不管你在做什麼——打字、切換對話、還是讓 Terminal 休息。眼鏡繼續震。代碼繼續流。誰都不會被落下。
+
+| | ScheduleWakeup (v1) | CronCreate (v2) |
+|---|---|---|
+| **用戶打字** | ❌ 被取消 | ✅ 繼續運行 |
+| **待機/休眠** | ❌ 不觸發 | ✅ 獨立觸發 |
+| **跨對話** | ❌ 只限同一 session | ✅ 跨對話通知 |
+
+一個 flag 檔（`/tmp/glasses-dashboard-active`）追蹤監控是否應該運行。Cron job 先檢查 flag——用戶說了「關閉」，flag 就不在了，job 靜靜地什麼都不做。Session 斷了？Flag 還在。重連？自動恢復。它跟你同呼吸。
 
 ## 安裝
 
@@ -226,7 +238,7 @@ bash glasses-cli.sh dashboard
 
 ## 腳本：`glasses-cli.sh`
 
-一個檔案。六個指令。依賴只有 bash + python3 + curl。
+一個檔案。九個指令。依賴只有 bash + python3 + curl。
 
 | 指令 | 作用 |
 |---------|-------------|
@@ -236,6 +248,9 @@ bash glasses-cli.sh dashboard
 | `beeper` | 只檢查 Beeper |
 | `hub` | 只檢查 API |
 | `ssh` | SSH 入侵檢查 |
+| `monitor-start` | 設定監控 flag（跨 session 持久） |
+| `monitor-stop` | 清除監控 flag |
+| `monitor-status` | 檢查監控是否啟動（`{"active":true/false}`） |
 
 `dashboard` 指令輸出的 JSON 包含 `display` 欄位——那就是直接推到眼鏡的預格式化文字。Claude Code 不需要想怎麼排版。直接傳。AI 思考時間為零 = 更新更快。
 
@@ -246,7 +261,8 @@ bash glasses-cli.sh dashboard
 1. 每次新 session **自動啟動** dashboard
 2. 遵循**嚴格的機械流程** — 不思考、不分析、不「讓我來總結一下看到的內容」
 3. 把腳本輸出**直接傳給** `AskUserQuestion`
-4. 透過 `ScheduleWakeup` 跑 **60 秒監控循環**
+4. 透過 `CronCreate` 跑 **60 秒監控循環**（不用 ScheduleWakeup——見上面解釋）
+5. 透過 monitor flag 檔 **自動恢復** 上次中斷的監控
 
 把一個會思考的 AI 變成不會思考的顯示管道。Claude 越少思考，眼鏡更新越快。諷刺？也許。有效？絕對。
 

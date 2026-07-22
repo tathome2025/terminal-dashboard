@@ -158,7 +158,7 @@ You open Terminal
      │
      │ You tap "Start Monitoring"
      ▼
-  Every 60 seconds:
+  CronCreate job fires every 60 seconds:
      │
      ├─ New message? ──→ Glasses buzz: "Alice: where are you"
      ├─ New task?    ──→ Glasses buzz: "New: Fix prod bug"  
@@ -166,7 +166,19 @@ You open Terminal
      └─ Nothing new? ──→ Silence. Peace. Code.
 ```
 
-Session alive = monitoring runs. Session dies = monitoring stops. Reconnect = auto-restarts. It breathes with you.
+### Why CronCreate, Not ScheduleWakeup
+
+The first version used `ScheduleWakeup` — a timer that fires once after N seconds. It had a fatal flaw: **every time you type something to Claude Code, the pending wakeup gets cancelled.** For a code farmer who's constantly talking to his AI, this meant notifications simply... stopped.
+
+`CronCreate` solves this. It creates an independent recurring cron job that fires every minute regardless of what you're doing — typing, switching conversations, or letting the Terminal rest. The glasses keep buzzing. The code keeps flowing. Nobody gets left behind.
+
+| | ScheduleWakeup (v1) | CronCreate (v2) |
+|---|---|---|
+| **User types** | ❌ Cancelled | ✅ Keeps running |
+| **Standby/sleep** | ❌ Does not fire | ✅ Fires independently |
+| **Cross-conversation** | ❌ Same session only | ✅ Works across conversations |
+
+A monitor flag file (`/tmp/glasses-dashboard-active`) tracks whether monitoring should be running. The cron job checks this flag first — if the user said "Close", the flag is gone, and the job silently does nothing. Session dies? Flag persists. Reconnect? Auto-restores. It breathes with you.
 
 ## Setup
 
@@ -228,7 +240,7 @@ Build it with whatever you want — Next.js, Flask, Express, a CGI script from 2
 
 ## The Script: `glasses-cli.sh`
 
-One file. Six commands. No dependencies beyond bash + python3 + curl.
+One file. Nine commands. No dependencies beyond bash + python3 + curl.
 
 | Command | What it does |
 |---------|-------------|
@@ -238,6 +250,9 @@ One file. Six commands. No dependencies beyond bash + python3 + curl.
 | `beeper` | Beeper-only diff check |
 | `hub` | API-only diff check |
 | `ssh` | SSH intrusion check |
+| `monitor-start` | Set monitoring flag (persists across sessions) |
+| `monitor-stop` | Clear monitoring flag |
+| `monitor-status` | Check if monitoring is active (`{"active":true/false}`) |
 
 The `dashboard` command outputs JSON with a `display` field — that's the pre-formatted text that goes straight to your glasses. Claude Code doesn't need to think about formatting. It just passes it through. Zero AI thinking time = faster updates.
 
@@ -248,7 +263,8 @@ The file `claude-memory-example.md` is key. It tells Claude Code:
 1. **Auto-start** the dashboard on every new session
 2. Follow a **strict mechanical flow** — no thinking, no analysis, no "let me summarize what I see"
 3. **Pass script output directly** to `AskUserQuestion`
-4. Run a **60-second monitoring loop** via `ScheduleWakeup`
+4. Run a **60-second monitoring loop** via `CronCreate` (not ScheduleWakeup — see above for why)
+5. **Auto-restore** monitoring on session reconnect via the monitor flag file
 
 This turns a thinking AI into a non-thinking display pipe. The less Claude thinks, the faster your glasses update. Ironic? Maybe. Effective? Absolutely.
 
