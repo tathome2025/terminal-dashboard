@@ -145,7 +145,76 @@ Terminal Dashboard  2026-07-22 Wednesday 14:30
 
 All while your Terminal cursor keeps blinking. Content. Undisturbed.
 
-## The Monitoring Loop
+## The Monitoring Loop (or: How the Code Farmer Almost Lost His Mind)
+
+For a while, everything was perfect.
+
+The code farmer had his dashboard. His glasses glowed green. Every 60 seconds, the Terminal whispered the state of the world into his right eye. Messages, tasks, meetings, news — all there, all quiet, all without `⌘+Tab`.
+
+He was happy. He was *senior*.
+
+And then he noticed something.
+
+He was talking to his AI — dictating code, reviewing a PR, asking about some obscure API. Normal things. Senior things. And somewhere in the middle of it, a WhatsApp message arrived. He knew because he checked his phone later. Not because his glasses told him.
+
+His glasses had been silent. For how long? He didn't know.
+
+He checked. The monitoring loop had stopped. No error. No warning. Just... silence. Like a heartbeat that skipped and never came back.
+
+*"What happened?"* he asked the Terminal.
+
+The Terminal blinked. Innocent.
+
+He dug in. And what he found was the kind of bug that makes you question your relationship with computers:
+
+**Every time he typed something to Claude Code — every keystroke, every voice command, every "hey, can you check this" — the pending `ScheduleWakeup` timer got cancelled.** Silently. Automatically. By design.
+
+The very act of *using* the Terminal killed the notifications *from* the Terminal.
+
+It was like a partner who goes silent the moment you start talking. Not out of spite. Just... by design. A design that assumed you'd sit there, hands folded, waiting. Not speaking. Not coding. Not doing the one thing a code farmer does all day.
+
+```
+v1: ScheduleWakeup
+     │
+     ├─ You type → ❌ Timer cancelled. Silence.
+     ├─ You switch conversations → ❌ Timer cancelled. Silence.
+     ├─ You walk away → ❌ Timer doesn't fire. Silence.
+     └─ You sit perfectly still and don't breathe → ✅ It works!
+                                                     (not a real solution)
+```
+
+The code farmer stared at the screen. He stared at his glasses. He said a word that we will not print here.
+
+Then he found `CronCreate`.
+
+`CronCreate` doesn't set a timer. It creates a **cron job** — an independent, recurring heartbeat that fires every minute regardless of what you're doing. Typing? Cron fires. Switching conversations? Cron fires. Walking to get coffee? Cron fires. Having an existential crisis about timer semantics? Cron fires.
+
+It doesn't care. It doesn't cancel. It just... runs. Like a heartbeat should.
+
+```
+v2: CronCreate
+     │
+     ├─ You type → ✅ Cron fires anyway
+     ├─ You switch conversations → ✅ Cron fires anyway
+     ├─ You walk away → ✅ Cron fires anyway
+     ├─ You come back tomorrow → ✅ Cron fires anyway
+     └─ You tell it to stop → 🛑 Flag deleted. Cron checks. Stops.
+                                  (the ONLY way it stops)
+```
+
+A tiny file — `/tmp/glasses-dashboard-active` — acts as the flag. "Start Monitoring" creates it. "Close" deletes it. The cron job checks this flag first. If it's gone, the job does nothing. If it's there, the job checks for new messages and pushes them to your glasses.
+
+Session dies? Flag stays. Next session? Auto-restores. It's a heartbeat that survives cardiac arrest.
+
+The code farmer put on his glasses. He started typing. He dictated code. He switched conversations. He walked away to make tea. He came back.
+
+The glasses had been buzzing the whole time. Every message. Every alert. Without interruption.
+
+He smiled again. But this time it was a different smile — the smile of someone who has mass-debugged a timer system at 2 AM and emerged victorious.
+
+*"That's more like it,"* he said to the Terminal.
+
+The Terminal blinked. Content. Undisturbed.
 
 ```
 You open Terminal
@@ -158,27 +227,15 @@ You open Terminal
      │
      │ You tap "Start Monitoring"
      ▼
-  CronCreate job fires every 60 seconds:
+  CronCreate fires every 60 seconds:
      │
      ├─ New message? ──→ Glasses buzz: "Alice: where are you"
      ├─ New task?    ──→ Glasses buzz: "New: Fix prod bug"  
      ├─ Meeting soon?──→ Glasses buzz: "15:00 Team standup"
      └─ Nothing new? ──→ Silence. Peace. Code.
+     │
+     └─ And it keeps firing. No matter what. Until you say stop.
 ```
-
-### Why CronCreate, Not ScheduleWakeup
-
-The first version used `ScheduleWakeup` — a timer that fires once after N seconds. It had a fatal flaw: **every time you type something to Claude Code, the pending wakeup gets cancelled.** For a code farmer who's constantly talking to his AI, this meant notifications simply... stopped.
-
-`CronCreate` solves this. It creates an independent recurring cron job that fires every minute regardless of what you're doing — typing, switching conversations, or letting the Terminal rest. The glasses keep buzzing. The code keeps flowing. Nobody gets left behind.
-
-| | ScheduleWakeup (v1) | CronCreate (v2) |
-|---|---|---|
-| **User types** | ❌ Cancelled | ✅ Keeps running |
-| **Standby/sleep** | ❌ Does not fire | ✅ Fires independently |
-| **Cross-conversation** | ❌ Same session only | ✅ Works across conversations |
-
-A monitor flag file (`/tmp/glasses-dashboard-active`) tracks whether monitoring should be running. The cron job checks this flag first — if the user said "Close", the flag is gone, and the job silently does nothing. Session dies? Flag persists. Reconnect? Auto-restores. It breathes with you.
 
 ## Setup
 
@@ -258,13 +315,15 @@ The `dashboard` command outputs JSON with a `display` field — that's the pre-f
 
 ## The Claude Code Memory Trick
 
-The file `claude-memory-example.md` is key. It tells Claude Code:
+The file `claude-memory-example.md` is key. It's the part where you sit the AI down and say: *"Listen. I know you're smart. I know you want to help. But right now, I need you to be dumb. Specifically, I need you to be a display cable with opinions."*
 
-1. **Auto-start** the dashboard on every new session
-2. Follow a **strict mechanical flow** — no thinking, no analysis, no "let me summarize what I see"
-3. **Pass script output directly** to `AskUserQuestion`
-4. Run a **60-second monitoring loop** via `CronCreate` (not ScheduleWakeup — see above for why)
-5. **Auto-restore** monitoring on session reconnect via the monitor flag file
+It tells Claude Code:
+
+1. **Auto-start** the dashboard on every new session — don't wait to be asked, don't recap your memories, just show the dashboard
+2. Follow a **strict mechanical flow** — no thinking, no analysis, no "let me summarize what I see for you"
+3. **Pass script output directly** to `AskUserQuestion` — the script already formatted everything, Claude just pipes it through
+4. Run a **60-second monitoring loop** via `CronCreate` — not `ScheduleWakeup`, because we learned that lesson the hard way (see the story above)
+5. **Auto-restore** monitoring on session reconnect — if the flag file exists, pick up where you left off, no questions asked
 
 This turns a thinking AI into a non-thinking display pipe. The less Claude thinks, the faster your glasses update. Ironic? Maybe. Effective? Absolutely.
 
